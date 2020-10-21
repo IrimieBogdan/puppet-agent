@@ -20,4 +20,13 @@ fi
 
 COMMAND=`basename "${0}"`
 
-exec /opt/puppetlabs/puppet/bin/${COMMAND} "$@"
+new_args=''
+for arg in "$@"; do
+    if test "$arg" = "-p" && "$COMMAND" = 'facter'; then
+      COMMAND='puppet facts show'
+    else
+      new_args="$new_args$arg "
+    fi
+done
+
+exec /opt/puppetlabs/puppet/bin/${COMMAND} ${new_args}
